@@ -1,0 +1,79 @@
+let pub U32_MASK = 0xFFFFFFFF
+
+fn pub u32_rotate_right(int: Int, count: Int) -> Int {
+  let int = int & U32_MASK
+  ((int >> count) | (int << (32 - count))) & U32_MASK
+}
+
+fn pub u32_to_le_bytes(int: Int) -> ByteArray {
+  let bytes = ByteArray.new
+
+  bytes.push((int & 0x000000FF) >> 0)
+  bytes.push((int & 0x0000FF00) >> 8)
+  bytes.push((int & 0x00FF0000) >> 16)
+  bytes.push((int & 0xFF000000) >> 24)
+
+  bytes
+}
+
+fn pub u32_wrapping_add(int1: Int, int2: Int) -> Int {
+  (int1 + int2) & U32_MASK
+}
+
+class pub ByteArraySlice {
+  let @bytes: ref ByteArray
+  let @start: Int
+  let @size: Int
+
+  fn pub static new(bytes: ref ByteArray, start: Int, size: Int) -> ByteArraySlice {
+    ByteArraySlice {
+      @bytes = bytes,
+      @start = start,
+      @size = size,
+    }
+  }
+
+  fn pub slice(start: Int, size: Int) -> ByteArraySlice {
+    ByteArraySlice.new(@bytes, @start + start, size)
+  }
+
+  fn pub to_byte_array -> ByteArray {
+    @bytes.slice(@start, @size)
+  }
+
+  fn pub size -> Int {
+    @size
+  }
+}
+
+class pub ByteArraySliceMut {
+  let @bytes: mut ByteArray
+  let @start: Int
+  let @size: Int
+
+  fn pub static new(bytes: mut ByteArray, start: Int, size: Int) -> ByteArraySliceMut {
+    ByteArraySliceMut {
+      @bytes = bytes,
+      @start = start,
+      @size = size,
+    }
+  }
+
+  fn pub mut replace(start: Int, bytes: ref ByteArray) {
+    0.until(bytes.size).iter.each fn (i) {
+      @bytes.set(@start + start + i, bytes.get(i))
+    }
+  }
+
+  fn pub mut slice(start: Int, size: Int) -> ByteArraySliceMut {
+    ByteArraySliceMut.new(@bytes, @start + start, size)
+  }
+
+  fn pub to_byte_array -> ByteArray {
+    @bytes.slice(@start, @size)
+  }
+
+  fn pub size -> Int {
+    @size
+  }
+}
