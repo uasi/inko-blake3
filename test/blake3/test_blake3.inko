@@ -1,0 +1,12 @@
+import std.test.Tests
+
+import blake3.Blake3
+
+fn pub tests(t: mut Tests) {
+  t.test('Blake3') fn (t) {
+    let hasher = Blake3.new
+    hasher.write('hello'.to_byte_array)
+
+    t.equal(hasher.finish.to_string, 'ea8f163db38682925e4491c5e58d4bb3506ef8c14eb78a86e908c5624a67200f')
+  }
+}
